@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Floating Notes Popup</title>
+    <style>
+      /* Floating Button */
+      .floating-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 20px;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+      }
+
+      /* Notes Popup */
+      .notes-popup {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        width: 250px;
+        height: 200px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+        display: none;
+        flex-direction: column;
+        padding: 10px;
+        z-index: 1000;
+      }
+
+      /* Notes Header */
+      .notes-header {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      /* Close Button */
+      .notes-header button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      /* Notes Textarea */
+      #notesText {
+        width: 100%;
+        height: 80%;
+        border: none;
+        resize: none;
+        outline: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Floating Notes Button -->
+    <button id="openNotes" class="floating-button">📝</button>
+
+    <!-- Notes Popup -->
+    <div id="notesPopup" class="notes-popup">
+      <div class="notes-header">
+        <span>Quick Notes</span>
+        <button id="closeNotes">✖</button>
+      </div>
+      <textarea
+        id="notesText"
+        placeholder="Write your notes here..."
+      ></textarea>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const notesPopup = document.getElementById("notesPopup");
+        const openNotes = document.getElementById("openNotes");
+        const closeNotes = document.getElementById("closeNotes");
+        const notesText = document.getElementById("notesText");
+
+        // Load saved notes
+        notesText.value = localStorage.getItem("userNotes") || "";
+
+        // Show popup
+        openNotes.addEventListener("click", () => {
+          notesPopup.style.display = "flex";
+        });
+
+        // Hide popup
+        closeNotes.addEventListener("click", () => {
+          notesPopup.style.display = "none";
+        });
+
+        // Save notes in local storage
+        notesText.addEventListener("input", () => {
+          localStorage.setItem("userNotes", notesText.value);
+        });
+      });
+    </script>
+    <script>
+      // Function to apply theme
+      function applyTheme(theme) {
+          switch (theme) {
+              case "dark":
+                  document.documentElement.style.setProperty("--bg-color", "#1e1e1e");
+                  document.documentElement.style.setProperty("--text-color", "#e0e0e0");
+                  document.documentElement.style.setProperty("--btn-color", "#bb86fc");
+                  document.documentElement.style.setProperty("--btn-hover", "#9965f4");
+                  document.documentElement.style.setProperty("--container-bg", "#2d2d2d");
+                  document.documentElement.style.setProperty("--nav-bg", "#2d2d2d");
+                  document.documentElement.style.setProperty("--border-color", "#404040");
+                  document.documentElement.style.setProperty("--shadow-color", "rgba(0, 0, 0, 0.3)");
+                  document.documentElement.style.setProperty("--logo-color", "#bb86fc");
+                  document.documentElement.style.setProperty("--tab-bg", "#404040");
+                  document.documentElement.style.setProperty("--tab-active", "#bb86fc");
+                  break;
+              case "blue":
+                  document.documentElement.style.setProperty("--bg-color", "#e3f2fd");
+                  document.documentElement.style.setProperty("--text-color", "#1a237e");
+                  document.documentElement.style.setProperty("--btn-color", "#1976d2");
+                  document.documentElement.style.setProperty("--btn-hover", "#1565c0");
+                  document.documentElement.style.setProperty("--container-bg", "white");
+                  document.documentElement.style.setProperty("--nav-bg", "#bbdefb");
+                  document.documentElement.style.setProperty("--border-color", "#90caf9");
+                  document.documentElement.style.setProperty("--shadow-color", "rgba(25, 118, 210, 0.2)");
+                  document.documentElement.style.setProperty("--logo-color", "#1976d2");
+                  document.documentElement.style.setProperty("--tab-bg", "#bbdefb");
+                  document.documentElement.style.setProperty("--tab-active", "#1976d2");
+                  break;
+              case "red":
+                  document.documentElement.style.setProperty("--bg-color", "#ffebee");
+                  document.documentElement.style.setProperty("--text-color", "#b71c1c");
+                  document.documentElement.style.setProperty("--btn-color", "#d32f2f");
+                  document.documentElement.style.setProperty("--btn-hover", "#c62828");
+                  document.documentElement.style.setProperty("--container-bg", "white");
+                  document.documentElement.style.setProperty("--nav-bg", "#ffcdd2");
+                  document.documentElement.style.setProperty("--border-color", "#ef9a9a");
+                  document.documentElement.style.setProperty("--shadow-color", "rgba(211, 47, 47, 0.2)");
+                  document.documentElement.style.setProperty("--logo-color", "#d32f2f");
+                  document.documentElement.style.setProperty("--tab-bg", "#ffcdd2");
+                  document.documentElement.style.setProperty("--tab-active", "#d32f2f");
+                  break;
+              default: // light theme
+                  document.documentElement.style.setProperty("--bg-color", "#f4f4f4");
+                  document.documentElement.style.setProperty("--text-color", "#333");
+                  document.documentElement.style.setProperty("--btn-color", "#28a745");
+                  document.documentElement.style.setProperty("--btn-hover", "#218838");
+                  document.documentElement.style.setProperty("--container-bg", "white");
+                  document.documentElement.style.setProperty("--nav-bg", "white");
+                  document.documentElement.style.setProperty("--border-color", "#ddd");
+                  document.documentElement.style.setProperty("--shadow-color", "rgba(0, 0, 0, 0.1)");
+                  document.documentElement.style.setProperty("--logo-color", "#4a90e2");
+                  document.documentElement.style.setProperty("--tab-bg", "#f0f0f0");
+                  document.documentElement.style.setProperty("--tab-active", "#28a745");
+                  break;
+          }
+      }
+      
+      // Initialize theme when page loads
+      document.addEventListener('DOMContentLoaded', function() {
+          const savedTheme = localStorage.getItem("appTheme");
+          if (savedTheme) {
+              applyTheme(savedTheme);
+          }
+      });
+      
+      // Listen for theme changes in other tabs/windows
+      window.addEventListener('storage', function(e) {
+          if (e.key === 'appTheme') {
+              applyTheme(e.newValue);
+          }
+      });
+      </script>
+  </body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gemini Chatbot</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background: #f5f5f5;
+      }
+
+      .chat-container {
+        max-width: 800px;
+        margin: auto;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        height: 80vh;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .chat-header {
+        padding: 20px;
+        background: #4285f4;
+        color: white;
+        border-radius: 10px 10px 0 0;
+      }
+
+      .chat-messages {
+        flex-grow: 1;
+        padding: 20px;
+        overflow-y: auto;
+      }
+
+      .message {
+        margin-bottom: 15px;
+        padding: 10px 15px;
+        border-radius: 15px;
+        max-width: 70%;
+      }
+
+      .user-message {
+        background: #e3f2fd;
+        margin-left: auto;
+        border-bottom-right-radius: 5px;
+      }
+
+      .bot-message {
+        background: #f5f5f5;
+        margin-right: auto;
+        border-bottom-left-radius: 5px;
+      }
+
+      .input-container {
+        padding: 20px;
+        border-top: 1px solid #ddd;
+        display: flex;
+        gap: 10px;
+      }
+
+      #user-input {
+        flex-grow: 1;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+
+      #send-button {
+        padding: 10px 20px;
+        background: #4285f4;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+      }
+
+      #send-button:hover {
+        background: #2b76f5;
+      }
+
+      .typing-indicator {
+        display: none;
+        color: #666;
+        font-style: italic;
+        margin-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="chat-container">
+      <div class="chat-header">
+        <h2>Gemini Chatbot</h2>
+      </div>
+      <div class="chat-messages" id="chat-messages">
+        <div class="message bot-message">Hello! How can I help you today?</div>
+      </div>
+      <div class="typing-indicator" id="typing-indicator">Bot is typing...</div>
+      <div class="input-container">
+        <input
+          type="text"
+          id="user-input"
+          placeholder="Type your message..."
+          autocomplete="off"
+        />
+        <button id="send-button">Send</button>
+      </div>
+    </div>
+
+    <script>
+      const API_KEY = "AIzaSyB-azDiiXpTi9t0wR4hZLZ3tjGRsBB8Nuc";
+      const API_URL =
+        "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+
+      const chatMessages = document.getElementById("chat-messages");
+      const userInput = document.getElementById("user-input");
+      const sendButton = document.getElementById("send-button");
+      const typingIndicator = document.getElementById("typing-indicator");
+
+      let conversationHistory = [];
+
+      async function sendMessage() {
+        const message = userInput.value.trim();
+        if (!message) return;
+
+        // Add user message to chat
+        addMessage(message, "user");
+        userInput.value = "";
+
+        // Show typing indicator
+        typingIndicator.style.display = "block";
+
+        try {
+          // Add message to conversation history
+          conversationHistory.push({
+            role: "user",
+            parts: [{ text: message }],
+          });
+
+          // Prepare the request
+          const response = await fetch(`${API_URL}?key=${API_KEY}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              contents: [
+                {
+                  parts: [
+                    {
+                      text: message,
+                    },
+                  ],
+                },
+              ],
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          const data = await response.json();
+
+          if (
+            data.candidates &&
+            data.candidates[0] &&
+            data.candidates[0].content
+          ) {
+            const botResponse = data.candidates[0].content.parts[0].text;
+
+            // Add bot's response to conversation history
+            conversationHistory.push({
+              role: "model",
+              parts: [{ text: botResponse }],
+            });
+
+            addMessage(botResponse, "bot");
+          } else {
+            console.error("Unexpected API response structure:", data);
+            addMessage(
+              "Sorry, I received an unexpected response. Please try again.",
+              "bot"
+            );
+          }
+        } catch (error) {
+          console.error("Error:", error);
+          addMessage("Sorry, I encountered an error. Please try again.", "bot");
+        }
+
+        // Hide typing indicator
+        typingIndicator.style.display = "none";
+      }
+
+      function addMessage(text, sender) {
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${sender}-message`;
+
+        // Handle markdown-style code blocks if present
+        if (text.includes("```")) {
+          const formattedText = text.replace(
+            /```([\s\S]*?)```/g,
+            (match, code) => {
+              return `<pre><code>${code.trim()}</code></pre>`;
+            }
+          );
+          messageDiv.innerHTML = formattedText;
+        } else {
+          messageDiv.textContent = text;
+        }
+
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      // Event listeners
+      sendButton.addEventListener("click", sendMessage);
+      userInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          sendMessage();
+        }
+      });
+
+      // Focus input on load
+      userInput.focus();
+    </script>
+    <script>
+      // Function to apply theme
+      function applyTheme(theme) {
+          switch (theme) {
+              case "dark":
+                  document.documentElement.style.setProperty("--bg-color", "#1e1e1e");
+                  document.documentElement.style.setProperty("--text-color", "#e0e0e0");
+                  document.documentElement.style.setProperty("--btn-color", "#bb86fc");
+                  document.documentElement.style.setProperty("--btn-hover", "#9965f4");
+                  document.documentElement.style.setProperty("--container-bg", "#2d2d2d");
+                  document.documentElement.style.setProperty("--nav-bg", "#2d2d2d");
+                  document.documentElement.style.setProperty("--border-color", "#404040");
+                  document.documentElement.style.setProperty("--shadow-color", "rgba(0, 0, 0, 0.3)");
+                  document.documentElement.style.setProperty("--logo-color", "#bb86fc");
+                  document.documentElement.style.setProperty("--tab-bg", "#404040");
+                  document.documentElement.style.setProperty("--tab-active", "#bb86fc");
+                  break;
+              case "blue":
+                  document.documentElement.style.setProperty("--bg-color", "#e3f2fd");
+                  document.documentElement.style.setProperty("--text-color", "#1a237e");
+                  document.documentElement.style.setProperty("--btn-color", "#1976d2");
+                  document.documentElement.style.setProperty("--btn-hover", "#1565c0");
+                  document.documentElement.style.setProperty("--container-bg", "white");
+                  document.documentElement.style.setProperty("--nav-bg", "#bbdefb");
+                  document.documentElement.style.setProperty("--border-color", "#90caf9");
+                  document.documentElement.style.setProperty("--shadow-color", "rgba(25, 118, 210, 0.2)");
+                  document.documentElement.style.setProperty("--logo-color", "#1976d2");
+                  document.documentElement.style.setProperty("--tab-bg", "#bbdefb");
+                  document.documentElement.style.setProperty("--tab-active", "#1976d2");
+                  break;
+              case "red":
+                  document.documentElement.style.setProperty("--bg-color", "#ffebee");
+                  document.documentElement.style.setProperty("--text-color", "#b71c1c");
+                  document.documentElement.style.setProperty("--btn-color", "#d32f2f");
+                  document.documentElement.style.setProperty("--btn-hover", "#c62828");
+                  document.documentElement.style.setProperty("--container-bg", "white");
+                  document.documentElement.style.setProperty("--nav-bg", "#ffcdd2");
+                  document.documentElement.style.setProperty("--border-color", "#ef9a9a");
+                  document.documentElement.style.setProperty("--shadow-color", "rgba(211, 47, 47, 0.2)");
+                  document.documentElement.style.setProperty("--logo-color", "#d32f2f");
+                  document.documentElement.style.setProperty("--tab-bg", "#ffcdd2");
+                  document.documentElement.style.setProperty("--tab-active", "#d32f2f");
+                  break;
+              default: // light theme
+                  document.documentElement.style.setProperty("--bg-color", "#f4f4f4");
+                  document.documentElement.style.setProperty("--text-color", "#333");
+                  document.documentElement.style.setProperty("--btn-color", "#28a745");
+                  document.documentElement.style.setProperty("--btn-hover", "#218838");
+                  document.documentElement.style.setProperty("--container-bg", "white");
+                  document.documentElement.style.setProperty("--nav-bg", "white");
+                  document.documentElement.style.setProperty("--border-color", "#ddd");
+                  document.documentElement.style.setProperty("--shadow-color", "rgba(0, 0, 0, 0.1)");
+                  document.documentElement.style.setProperty("--logo-color", "#4a90e2");
+                  document.documentElement.style.setProperty("--tab-bg", "#f0f0f0");
+                  document.documentElement.style.setProperty("--tab-active", "#28a745");
+                  break;
+          }
+      }
+      
+      // Initialize theme when page loads
+      document.addEventListener('DOMContentLoaded', function() {
+          const savedTheme = localStorage.getItem("appTheme");
+          if (savedTheme) {
+              applyTheme(savedTheme);
+          }
+      });
+      
+      // Listen for theme changes in other tabs/windows
+      window.addEventListener('storage', function(e) {
+          if (e.key === 'appTheme') {
+              applyTheme(e.newValue);
+          }
+      });
+      </script>
+  </body>
+</html>

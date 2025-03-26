@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="login.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <!-- Add umbrella icons -->
+    <i class="fa-solid fa-umbrella floating-umbrella top-left"></i>
+    <i class="fa-solid fa-umbrella floating-umbrella bottom-right"></i>
+
+    <!-- Update triangle icons with correct Font Awesome classes -->
+    <i class="fa-solid fa-play floating-triangle top-right"></i>
+    <i class="fa-solid fa-play floating-triangle bottom-left"></i>
+
+    <!-- Add star and circle icons -->
+    <i class="fa-solid fa-star floating-shape center-left"></i>
+    <i class="fa-solid fa-circle floating-shape center-right"></i>
+
+    <div class="login-container">
+        <h2>Login</h2>
+        <input type="text" placeholder="Username" id="username">
+        <input type="password" placeholder="Password" id="password">
+        <button onclick="login()">Login</button>
+        <p id="error-message"></p>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

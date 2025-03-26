@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pomodoro Timer</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      /* Navigation Bar Styles */
+      .navbar {
+        background: var(--nav-bg);
+        box-shadow: 0 2px 10px var(--shadow-color);
+        padding: 1rem 2rem;
+        position: fixed;
+        width: 100%;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .nav-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: var(--logo-color);
+        text-decoration: none;
+      }
+
+      .nav-links {
+        display: flex;
+        gap: 2rem;
+      }
+
+      .nav-links a {
+        text-decoration: none;
+        color: var(--text-color);
+        font-weight: 500;
+        padding: 0.5rem 1rem;
+        border-radius: 5px;
+        transition: all 0.3s ease;
+      }
+
+      .nav-links a:hover {
+        background: var(--bg-color);
+        color: var(--btn-color);
+      }
+
+      .icon {
+        margin-right: 8px;
+        font-size: 1.2em;
+      }
+
+      /* Pomodoro Styles */
+      :root {
+        --bg-color: #f4f4f4;
+        --text-color: #333;
+        --btn-color: #28a745;
+        --btn-hover: #218838;
+        --container-bg: white;
+        --nav-bg: white;
+        --border-color: #ddd;
+        --shadow-color: rgba(0, 0, 0, 0.1);
+        --logo-color: #4a90e2;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        text-align: center;
+        margin: 0;
+        padding: 0;
+        padding-top: 80px; /* Added to account for fixed navbar */
+        transition: all 0.3s ease;
+      }
+      .container {
+        max-width: 600px;
+        margin: 20px auto;
+        background: var(--container-bg);
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px var(--shadow-color);
+        position: relative;
+      }
+      .icons-container {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        display: flex;
+        gap: 15px;
+      }
+      .settings-icon,
+      .edit-icon {
+        font-size: 1.5rem;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: opacity 0.3s ease;
+      }
+      .settings-icon:hover,
+      .edit-icon:hover {
+        opacity: 1;
+      }
+      .timer-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 20px 0;
+      }
+      .timer {
+        font-size: 4rem;
+        font-weight: bold;
+        color: var(--text-color);
+      }
+      button {
+        background-color: var(--btn-color);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        margin: 10px;
+        font-size: 1rem;
+        cursor: pointer;
+        border-radius: 5px;
+      }
+      button:hover {
+        background-color: var(--btn-hover);
+      }
+      .settings-panel {
+        display: none;
+        position: absolute;
+        top: 50px;
+        right: 10px;
+        background: var(--container-bg);
+        padding: 15px;
+        border-radius: 5px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        border: 1px solid var(--border-color);
+        min-width: 200px;
+        z-index: 100;
+      }
+      select {
+        padding: 5px;
+        font-size: 1rem;
+        margin-top: 10px;
+        width: 100%;
+        background: var(--container-bg);
+        color: var(--text-color);
+        border: 1px solid var(--border-color);
+      }
+      .timer-settings {
+        margin-top: 10px;
+        border-top: 1px solid var(--border-color);
+        padding-top: 10px;
+      }
+      .timer-input {
+        margin: 10px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .timer-input input {
+        width: 60px;
+        padding: 5px;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        background: var(--container-bg);
+        color: var(--text-color);
+      }
+      .timer-input label {
+        margin-right: 10px;
+      }
+      #themeSettingsPanel {
+        right: 45px;
+      }
+      #timerSettingsPanel {
+        right: 10px;
+      }
+
+      /* Add these CSS animations for the Squid Game theme */
+      @keyframes neonPulse {
+        0% {
+          box-shadow: 0 0 10px #ff1744;
+        }
+        50% {
+          box-shadow: 0 0 20px #ff1744, 0 0 30px #ff1744;
+        }
+        100% {
+          box-shadow: 0 0 10px #ff1744;
+        }
+      }
+
+      /* Add this class for when Squid Game theme is active */
+      .squidgame-theme .timer {
+        animation: neonPulse 2s infinite;
+      }
+
+      .squidgame-theme .container {
+        background: rgba(26, 26, 26, 0.9);
+        border: 2px solid #ff1744;
+      }
+
+      .squidgame-theme button {
+        background-color: #ff1744;
+        border: none;
+      }
+
+      .squidgame-theme button:hover {
+        background-color: #ff4569;
+        animation: neonPulse 1s infinite;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+      <div class="nav-container">
+        <a href="landing.html" class="logo">MindSpark</a>
+        <div class="nav-links">
+          <a href="pomodoro.html"><i class="fas fa-clock icon"></i>Pomodoro</a>
+          <a href="calendar.html"
+            ><i class="far fa-calendar icon"></i>Calendar</a
+          >
+          <a href="notes.html"><i class="far fa-sticky-note icon"></i>Notes</a>
+          <a href="filemanager.html"><i class="far fa-folder icon"></i>Files</a>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Pomodoro Container -->
+    <div class="container">
+      <div class="icons-container">
+        <span class="settings-icon" onclick="toggleThemeSettings()">
+          <i class="fa fa-cog"></i>
+        </span>
+        <span class="edit-icon" onclick="toggleTimerSettings()">
+          <i class="fas fa-edit"></i>
+        </span>
+      </div>
+      <div class="settings-panel" id="themeSettingsPanel">
+        <label for="themeSelector">Choose Theme:</label>
+        <select id="themeSelector" onchange="changeTheme()">
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+          <option value="blue">Blue</option>
+          <option value="red">Red</option>
+          <option value="squidgame">Squid Game</option>
+        </select>
+        <br />
+        <label for="musicSelector">Choose Music:</label>
+        <select id="musicSelector" onchange="changeMusic()">
+          <option value="relaxing">Relaxing</option>
+          <option value="lofi">Lo-Fi</option>
+          <option value="piano">Piano</option>
+          <option value="nature">Nature</option>
+          <option value="squidgame">Squid Game</option>
+        </select>
+      </div>
+
+      <div class="settings-panel" id="timerSettingsPanel">
+        <label>Timer Settings (minutes):</label>
+        <div class="timer-settings">
+          <div class="timer-input">
+            <label for="workTime">Work Time:</label>
+            <input type="number" id="workTime" value="25" min="1" max="60" />
+          </div>
+          <div class="timer-input">
+            <label for="shortBreak">Short Break:</label>
+            <input type="number" id="shortBreak" value="5" min="1" max="30" />
+          </div>
+          <div class="timer-input">
+            <label for="longBreak">Long Break:</label>
+            <input type="number" id="longBreak" value="10" min="1" max="45" />
+          </div>
+        </div>
+      </div>
+
+      <h1>Pomodoro Timer</h1>
+      <h3 id="sessionType">Work Session</h3>
+      <div class="timer-container">
+        <div class="timer" id="timer">25:00</div>
+      </div>
+      <button id="startPauseBtn" onclick="toggleTimer()">▶ Start</button>
+      <button onclick="resetTimer()">🔄 Reset</button>
+      <button id="muteBtn" onclick="toggleMusic()">🔊 Mute</button>
+    </div>
+
+    <audio id="focusMusic" loop preload="auto">
+      <source src="./audio/squid_game_3.mp3" type="audio/mp3" />
+      Your browser does not support the audio element.
+    </audio>
+
+    <script>
+      let timeLeft = 1500; // 25 minutes
+      let timerRunning = false;
+      let timerInterval;
+      let sessionCount = 0;
+      let isWorkSession = true;
+      let musicPlaying = false;
+      let isMuted = false;
+      let notes = [
+        {
+          id: 1,
+          title: "Untitled",
+          content: "",
+        },
+      ];
+      let activeNoteId = 1;
+      let workDuration = 25;
+      let shortBreakDuration = 5;
+      let longBreakDuration = 10;
+
+      function updateTimerDisplay() {
+        let minutes = Math.floor(timeLeft / 60);
+        let seconds = timeLeft % 60;
+        document.getElementById("timer").innerText = `${minutes
+          .toString()
+          .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+      }
+
+      function toggleTimer() {
+        const button = document.getElementById("startPauseBtn");
+        if (!timerRunning) {
+          startTimer();
+          button.innerHTML = "⏸ Pause";
+        } else {
+          pauseTimer();
+          button.innerHTML = "▶ Start";
+        }
+      }
+
+      function startTimer() {
+        if (!timerRunning) {
+          timerRunning = true;
+          timerInterval = setInterval(() => {
+            if (timeLeft > 0) {
+              timeLeft--;
+              updateTimerDisplay();
+            } else {
+              clearInterval(timerInterval);
+              sessionCount++;
+              switchSession();
+            }
+          }, 1000);
+          playMusic();
+        }
+      }
+
+      function pauseTimer() {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        pauseMusic();
+        document.getElementById("startPauseBtn").innerHTML = "▶ Start";
+      }
+
+      function resetTimer() {
+        clearInterval(timerInterval);
+        timerRunning = false;
+        timeLeft = workDuration * 60;
+        sessionCount = 0;
+        isWorkSession = true;
+        document.getElementById("sessionType").innerText = "Work Session";
+        document.getElementById("startPauseBtn").innerHTML = "▶ Start";
+        updateTimerDisplay();
+        pauseMusic();
+      }
+
+      function switchSession() {
+        if (isWorkSession) {
+          isWorkSession = false;
+          if (sessionCount % 4 === 0) {
+            timeLeft = longBreakDuration * 60; // Long Break
+            document.getElementById("sessionType").innerText = "Long Break";
+          } else {
+            timeLeft = shortBreakDuration * 60; // Short Break
+            document.getElementById("sessionType").innerText = "Short Break";
+          }
+        } else {
+          isWorkSession = true;
+          timeLeft = workDuration * 60; // Work Duration
+          document.getElementById("sessionType").innerText = "Work Session";
+        }
+        updateTimerDisplay();
+        startTimer();
+      }
+
+      function changeTheme() {
+        let theme = document.getElementById("themeSelector").value;
+        applyTheme(theme);
+        // Store theme in localStorage
+        localStorage.setItem("appTheme", theme);
+
+        // Optional: Notify other open pages about theme change
+        window.dispatchEvent(
+          new StorageEvent("storage", {
+            key: "appTheme",
+            newValue: theme,
+          })
+        );
+      }
+
+      function applyTheme(theme) {
+        const root = document.documentElement;
+        switch (theme) {
+          case "squidgame":
+            root.style.setProperty("--bg-color", "#0a0a0a");
+            root.style.setProperty("--text-color", "#ffffff");
+            root.style.setProperty("--btn-color", "#ff1744");
+            root.style.setProperty("--btn-hover", "#ff4569");
+            root.style.setProperty("--container-bg", "#1a1a1a");
+            root.style.setProperty("--nav-bg", "#0a0a0a");
+            root.style.setProperty("--border-color", "#ff1744");
+            root.style.setProperty("--shadow-color", "rgba(255, 23, 68, 0.2)");
+            root.style.setProperty("--logo-color", "#ff1744");
+            document.body.style.backgroundImage =
+              "url('path/to/squid-game-background.jpg')";
+            document.body.style.backgroundSize = "cover";
+            document.body.style.backgroundPosition = "center";
+            document.body.style.backgroundAttachment = "fixed";
+
+            // Change music to Squid Game theme
+            const music = document.getElementById("focusMusic");
+            music.src = "squid_game_3.mp3";
+
+            // Add neon effect styles
+            addNeonStyles();
+            break;
+          case "dark":
+            root.style.setProperty("--bg-color", "#1e1e1e");
+            root.style.setProperty("--text-color", "#e0e0e0");
+            root.style.setProperty("--btn-color", "#bb86fc");
+            root.style.setProperty("--btn-hover", "#9965f4");
+            root.style.setProperty("--container-bg", "#2d2d2d");
+            root.style.setProperty("--nav-bg", "#2d2d2d");
+            root.style.setProperty("--border-color", "#404040");
+            root.style.setProperty("--shadow-color", "rgba(0, 0, 0, 0.3)");
+            root.style.setProperty("--logo-color", "#bb86fc");
+            document.body.style.backgroundImage = "none";
+            removeNeonStyles();
+            break;
+          case "blue":
+            root.style.setProperty("--bg-color", "#e3f2fd");
+            root.style.setProperty("--text-color", "#1a237e");
+            root.style.setProperty("--btn-color", "#1976d2");
+            root.style.setProperty("--btn-hover", "#1565c0");
+            root.style.setProperty("--container-bg", "white");
+            root.style.setProperty("--nav-bg", "#bbdefb");
+            root.style.setProperty("--border-color", "#90caf9");
+            root.style.setProperty("--shadow-color", "rgba(25, 118, 210, 0.2)");
+            root.style.setProperty("--logo-color", "#1976d2");
+            document.body.style.backgroundImage = "none";
+            removeNeonStyles();
+            break;
+          case "red":
+            root.style.setProperty("--bg-color", "#ffebee");
+            root.style.setProperty("--text-color", "#b71c1c");
+            root.style.setProperty("--btn-color", "#d32f2f");
+            root.style.setProperty("--btn-hover", "#c62828");
+            root.style.setProperty("--container-bg", "white");
+            root.style.setProperty("--nav-bg", "#ffcdd2");
+            root.style.setProperty("--border-color", "#ef9a9a");
+            root.style.setProperty("--shadow-color", "rgba(211, 47, 47, 0.2)");
+            root.style.setProperty("--logo-color", "#d32f2f");
+            document.body.style.backgroundImage = "none";
+            removeNeonStyles();
+            break;
+          default: // light theme
+            root.style.setProperty("--bg-color", "#f4f4f4");
+            root.style.setProperty("--text-color", "#333");
+            root.style.setProperty("--btn-color", "#28a745");
+            root.style.setProperty("--btn-hover", "#218838");
+            root.style.setProperty("--container-bg", "white");
+            root.style.setProperty("--nav-bg", "white");
+            root.style.setProperty("--border-color", "#ddd");
+            root.style.setProperty("--shadow-color", "rgba(0, 0, 0, 0.1)");
+            root.style.setProperty("--logo-color", "#4a90e2");
+            document.body.style.backgroundImage ="/Users/annjogeorge/Desktop/task/light theme.jpg";
+            removeNeonStyles();
+            break;
+        }
+      } 
+
+      // Add these new functions for neon effects
+      function addNeonStyles() {
+        const style = document.createElement("style");
+        style.id = "neonEffects";
+        style.textContent = `
+          .timer {
+            text-shadow: 0 0 10px #ff1744, 0 0 20px #ff1744, 0 0 30px #ff1744;
+          }
+          
+          button {
+            box-shadow: 0 0 10px #ff1744;
+            transition: all 0.3s ease;
+          }
+          
+          button:hover {
+            box-shadow: 0 0 20px #ff1744, 0 0 30px #ff1744;
+          }
+          
+          .container {
+            border: 2px solid #ff1744;
+            box-shadow: 0 0 20px #ff1744;
+          }
+          
+          #sessionType {
+            color: #ff1744;
+            text-shadow: 0 0 10px #ff1744;
+          }
+          
+          .settings-icon:hover {
+            color: #ff1744;
+            text-shadow: 0 0 10px #ff1744;
+          }
+        `;
+        document.head.appendChild(style);
+      }
+
+      function removeNeonStyles() {
+        const neonStyle = document.getElementById("neonEffects");
+        if (neonStyle) {
+          neonStyle.remove();
+        }
+      }
+
+      // Add this to initialize theme
+      document.addEventListener("DOMContentLoaded", function () {
+        // Load saved theme
+        const savedTheme = localStorage.getItem("appTheme");
+        if (savedTheme) {
+          document.getElementById("themeSelector").value = savedTheme;
+          applyTheme(savedTheme);
+        }
+
+        // Load saved timer settings
+        const savedSettings = localStorage.getItem("timerSettings");
+        if (savedSettings) {
+          const settings = JSON.parse(savedSettings);
+          document.getElementById("workTime").value = settings.work;
+          document.getElementById("shortBreak").value = settings.shortBreak;
+          document.getElementById("longBreak").value = settings.longBreak;
+          workDuration = settings.work;
+          shortBreakDuration = settings.shortBreak;
+          longBreakDuration = settings.longBreak;
+          resetTimer();
+        }
+
+        // Add change event listeners to timer inputs
+        document
+          .getElementById("workTime")
+          .addEventListener("change", updateTimerSettings);
+        document
+          .getElementById("shortBreak")
+          .addEventListener("change", updateTimerSettings);
+        document
+          .getElementById("longBreak")
+          .addEventListener("change", updateTimerSettings);
+      });
+
+      function playMusic() {
+        const music = document.getElementById("focusMusic");
+        if (!isMuted && !musicPlaying) {
+          music.play().catch((error) => {
+            console.log("Audio playback failed:", error);
+          });
+          musicPlaying = true;
+        }
+      }
+
+      function pauseMusic() {
+        const music = document.getElementById("focusMusic");
+        music.pause();
+        musicPlaying = false;
+      }
+
+      function changeMusic() {
+        const music = document.getElementById("focusMusic");
+        const selectedMusic = document.getElementById("musicSelector").value;
+        const musicUrls = {
+          relaxing: "./audio/squid_game_3.mp3", // Update with correct path
+          lofi: "./audio/lofi.mp3",
+          piano: "./audio/piano.mp3",
+          nature: "./audio/nature.mp3",
+          squidgame: "./audio/squid_game_3.mp3",
+        };
+
+        // Store current time and playing state
+        const wasPlaying = !music.paused;
+        const currentTime = music.currentTime;
+
+        // Update source
+        music.src = musicUrls[selectedMusic];
+
+        // Restore state
+        music.addEventListener("loadedmetadata", function () {
+          if (wasPlaying && !isMuted) {
+            music.play();
+            musicPlaying = true;
+          }
+        });
+      }
+
+      function toggleMusic() {
+        const muteBtn = document.getElementById("muteBtn");
+        const music = document.getElementById("focusMusic");
+
+        if (isMuted) {
+          // Unmute
+          music.muted = false;
+          isMuted = false;
+          muteBtn.innerHTML = "🔊 Mute";
+          if (timerRunning) {
+            music.play().catch((error) => {
+              console.log("Audio playback failed:", error);
+            });
+            musicPlaying = true;
+          }
+        } else {
+          // Mute
+          music.muted = true;
+          isMuted = true;
+          muteBtn.innerHTML = "🔈 Unmute";
+          musicPlaying = false;
+        }
+      }
+
+      function toggleThemeSettings() {
+        let panel = document.getElementById("themeSettingsPanel");
+        let timerPanel = document.getElementById("timerSettingsPanel");
+        timerPanel.style.display = "none"; // Close timer panel if open
+        panel.style.display =
+          panel.style.display === "block" ? "none" : "block";
+      }
+
+      function toggleTimerSettings() {
+        let panel = document.getElementById("timerSettingsPanel");
+        let themePanel = document.getElementById("themeSettingsPanel");
+        themePanel.style.display = "none"; // Close theme panel if open
+        panel.style.display =
+          panel.style.display === "block" ? "none" : "block";
+      }
+
+      // Add click event listener to close panels when clicking outside
+      document.addEventListener("click", function (event) {
+        const themePanel = document.getElementById("themeSettingsPanel");
+        const timerPanel = document.getElementById("timerSettingsPanel");
+        const settingsIcon = document.querySelector(".settings-icon");
+        const editIcon = document.querySelector(".edit-icon");
+
+        if (
+          !themePanel.contains(event.target) &&
+          !settingsIcon.contains(event.target)
+        ) {
+          themePanel.style.display = "none";
+        }
+
+        if (
+          !timerPanel.contains(event.target) &&
+          !editIcon.contains(event.target)
+        ) {
+          timerPanel.style.display = "none";
+        }
+      });
+
+      function saveNotes() {
+        localStorage.setItem("pomodoroNotes", JSON.stringify(notes));
+      }
+
+      function loadNotes() {
+        const savedNotes = localStorage.getItem("pomodoroNotes");
+        if (savedNotes) {
+          notes = JSON.parse(savedNotes);
+          renderNotes();
+        }
+      }
+
+      function updateNoteTitle(id, newTitle) {
+        const note = notes.find((n) => n.id === id);
+        if (note) {
+          note.title = newTitle || "Untitled";
+          renderNotes();
+          saveNotes();
+        }
+      }
+
+      function updateNoteContent(id, newContent) {
+        const note = notes.find((n) => n.id === id);
+        if (note) {
+          note.content = newContent;
+          saveNotes();
+        }
+      }
+
+      function addNewPage() {
+        const newNote = {
+          id: notes.length + 1,
+          title: "Untitled",
+          content: "",
+        };
+        notes.push(newNote);
+        renderNotes();
+        switchNote(newNote.id);
+        saveNotes();
+      }
+
+      function renderNotes() {
+        const tabsContainer = document.getElementById("noteTabs");
+        const notesContainer = document.getElementById("notesContainer");
+
+        // Render tabs
+        tabsContainer.innerHTML = notes
+          .map(
+            (note) => `
+          <button class="tab ${note.id === activeNoteId ? "active" : ""}" 
+                  onclick="switchNote(${note.id})">
+            ${note.title}
+          </button>
+        `
+          )
+          .join("");
+
+        // Render note pages
+        notesContainer.innerHTML = notes
+          .map(
+            (note) => `
+          <div class="note-page ${
+            note.id === activeNoteId ? "active" : ""
+          }" id="note-${note.id}">
+            <input type="text" 
+                   class="note-title" 
+                   value="${note.title}"
+                   placeholder="Enter title" 
+                   onchange="updateNoteTitle(${note.id}, this.value)">
+            <textarea class="note-content" 
+                      placeholder="Enter your notes here..."
+                      onchange="updateNoteContent(${note.id}, this.value)">${
+              note.content
+            }</textarea>
+          </div>
+        `
+          )
+          .join("");
+      }
+
+      function switchNote(id) {
+        activeNoteId = id;
+        renderNotes();
+      }
+
+      function updateTimerSettings() {
+        workDuration =
+          parseInt(document.getElementById("workTime").value) || 25;
+        shortBreakDuration =
+          parseInt(document.getElementById("shortBreak").value) || 5;
+        longBreakDuration =
+          parseInt(document.getElementById("longBreak").value) || 10;
+
+        // Save settings to localStorage
+        localStorage.setItem(
+          "timerSettings",
+          JSON.stringify({
+            work: workDuration,
+            shortBreak: shortBreakDuration,
+            longBreak: longBreakDuration,
+          })
+        );
+
+        // Reset timer with new duration if it's not running
+        if (!timerRunning) {
+          resetTimer();
+        }
+      }
+
+      updateTimerDisplay(); // Initialize timer display
+      loadNotes();
+    </script>
+  </body>
+</html>

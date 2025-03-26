@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Study Notes Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #f5f7fa;
+            --text-color: #333;
+            --hover-color: #357abd;
+            --bg-color: #f4f4f4;
+            --btn-color: #28a745;
+            --btn-hover: #218838;
+            --container-bg: white;
+            --nav-bg: white;
+            --border-color: #ddd;
+            --shadow-color: rgba(0, 0, 0, 0.1);
+            --logo-color: #4a90e2;
+            --tab-bg: #f0f0f0;
+            --tab-text: var(--text-color);
+            --tab-active-text: white;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%);
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        .navbar {
+            background: var(--nav-bg);
+            box-shadow: 0 2px 10px var(--shadow-color);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--logo-color);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            background: var(--secondary-color);
+            color: var(--primary-color);
+        }
+
+        .icon {
+            margin-right: 8px;
+            font-size: 1.2em;
+        }
+
+        .main-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: calc(100vh - 80px);
+            padding: 2rem;
+        }
+
+        .container {
+            background-color: var(--container-bg);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px var(--shadow-color);
+            text-align: center;
+            min-width: 300px;
+            max-width: 500px;
+            width: 100%;
+        }
+
+        .container h1 {
+            color: var(--primary-color);
+            margin-bottom: 30px;
+        }
+
+        .options {
+            margin: 20px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        select {
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
+            font-size: 16px;
+            background-color: var(--container-bg);
+            color: var(--text-color);
+            width: 100%;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        button {
+            margin: 5px;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: var(--btn-color);
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        button:hover {
+            background-color: var(--btn-hover);
+        }
+
+        .file-input-container {
+            margin-bottom: 20px;
+        }
+
+        #pdfUpload {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 2px dashed var(--border-color);
+            border-radius: 5px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .response-container {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: var(--container-bg);
+            border-radius: 8px;
+            box-shadow: 0 0 10px var(--shadow-color);
+            text-align: left;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .loading i {
+            font-size: 2em;
+            color: var(--primary-color);
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            color: #ff4444;
+            background-color: rgba(255, 68, 68, 0.1);
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .format-description {
+            text-align: left;
+            margin: 10px 0;
+            padding: 10px;
+            background-color: var(--secondary-color);
+            border-radius: 5px;
+            font-size: 0.9em;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                gap: 1rem;
+            }
+            
+            .container {
+                padding: 20px;
+                margin: 0 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="landing.html" class="logo">MindSpark</a>
+            <div class="nav-links">
+                <a href="pomodoro.html"><i class="fas fa-clock icon"></i>Pomodoro</a>
+                <a href="calendar.html"><i class="far fa-calendar icon"></i>Calendar</a>
+                <a href="notes.html"><i class="far fa-sticky-note icon"></i>Notes</a>
+                <a href="filemanager.html"><i class="far fa-folder icon"></i>Files</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="container">
+            <h1>Notes Analysis</h1>
+            <p style="margin-bottom: 20px; color: var(--text-color);">Upload any PDF document and convert it into organized study materials!</p>
+            
+            <div class="file-input-container">
+                <input type="file" id="pdfUpload" accept="application/pdf">
+            </div>
+            
+            <div class="options">
+                <select id="processOption" onchange="showFormatDescription()">
+                    <option value="" disabled selected>Select format option</option>
+                    <option value="bullet">Bullet Points</option>
+                    <option value="paragraph">Study Notes</option>
+                    <option value="time">Time Schedule</option>
+                </select>
+                
+                <div id="bullet-description" class="format-description">
+                    Creates organized bullet points with key concepts, definitions, and relationships between topics.
+                </div>
+                <div id="paragraph-description" class="format-description">
+                    Transforms content into well-structured study notes with clear explanations and examples.
+                </div>
+                <div id="time-description" class="format-description">
+                    Creates a detailed time schedule with suggested study durations and breaks for optimal learning.
+                </div>
+                
+                <button onclick="processPDF()">Generate Study Materials</button>
+            </div>
+            
+            <div class="loading">
+                <i class="fas fa-spinner"></i>
+                <p>Processing your document...</p>
+            </div>
+            <div class="error-message"></div>
+            <div class="response-container"></div>
+            <button id="saveAsPdf" style="display: none;">Save as PDF</button>
+        </div>
+    </main>
+
+    <script>
+        function showFormatDescription() {
+            // Hide all descriptions first
+            document.querySelectorAll('.format-description').forEach(desc => {
+                desc.style.display = 'none';
+            });
+            
+            // Show the selected format description
+            const select = document.getElementById('processOption');
+            const selectedOption = select.value;
+            if (selectedOption) {
+                document.getElementById(selectedOption + '-description').style.display = 'block';
+            }
+        }
+
+        async function processPDF() {
+            const fileInput = document.getElementById('pdfUpload');
+            const optionSelect = document.getElementById('processOption');
+            const file = fileInput.files[0];
+            const selectedOption = optionSelect.value;
+            const loadingDiv = document.querySelector('.loading');
+            const errorDiv = document.querySelector('.error-message');
+            const responseDiv = document.querySelector('.response-container');
+            const saveAsPdfButton = document.getElementById('saveAsPdf');
+
+            if (!file) {
+                showError('Please upload a PDF file first.');
+                return;
+            }
+            if (!selectedOption) {
+                showError('Please select a format option.');
+                return;
+            }
+
+            // Hide any previous error messages and responses
+            errorDiv.style.display = 'none';
+            responseDiv.style.display = 'none';
+            saveAsPdfButton.style.display = 'none'; // Hide the button initially
+            // Show loading indicator
+            loadingDiv.style.display = 'block';
+
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('option', selectedOption);
+
+                const response = await fetch('http://127.0.0.1:5000/process_pdf', {
+                    method: 'POST',
+                    body: formData,
+                    mode: 'cors'
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Hide loading indicator
+                    loadingDiv.style.display = 'none';
+                    // Show response
+                    responseDiv.style.display = 'block';
+                    responseDiv.innerHTML = `<h2>Generated Study Materials</h2><div>${formatResponse(data.response)}</div>`;
+                    saveAsPdfButton.style.display = 'block'; // Show the button to save as PDF
+                } else {
+                    throw new Error(data.error || 'Failed to process PDF');
+                }
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.querySelector('.error-message');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+
+        function formatResponse(response) {
+            // Convert custom markers to HTML tags
+            return response
+                .replace(/# (.+)/g, '<h1>$1</h1>') // Convert # to <h1>
+                .replace(/## (.+)/g, '<h2>$1</h2>') // Convert ## to <h2>
+                .replace(/\* (.+)/g, '<li>$1</li>') // Convert * to <li>
+                .replace(/\n/g, '<br>') // Convert newlines to <br>
+                .replace(/•/g, '&bull;') // Convert bullet points
+                .replace(/- /g, '&bull; '); // Convert hyphens to bullet points
+        }
+
+        document.getElementById('saveAsPdf').addEventListener('click', function() {
+            const element = document.querySelector('.response-container');
+            html2pdf().from(element).save('Study_Materials.pdf');
+        });
+    </script>
+</body>
+</html> 

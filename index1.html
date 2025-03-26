@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Manager Popup</title>
+    <style>
+        /* Floating button styles */
+        #popupBtn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            font-size: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        #popupBtn:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <button id="popupBtn">📝 Open Tasks</button>
+
+    <script>
+        document.getElementById("popupBtn").addEventListener("click", function() {
+            let popup = window.open("popup.html", "TaskManagerPopup", "width=400,height=500");
+            if (!popup || popup.closed || typeof popup.closed === 'undefined') { 
+                alert("Popup blocked! Please allow popups for this site.");
+            }
+        });
+    </script>
+    <script>
+        // Function to apply theme
+        function applyTheme(theme) {
+            switch (theme) {
+                case "dark":
+                    document.documentElement.style.setProperty("--bg-color", "#1e1e1e");
+                    document.documentElement.style.setProperty("--text-color", "#e0e0e0");
+                    document.documentElement.style.setProperty("--btn-color", "#bb86fc");
+                    document.documentElement.style.setProperty("--btn-hover", "#9965f4");
+                    document.documentElement.style.setProperty("--container-bg", "#2d2d2d");
+                    document.documentElement.style.setProperty("--nav-bg", "#2d2d2d");
+                    document.documentElement.style.setProperty("--border-color", "#404040");
+                    document.documentElement.style.setProperty("--shadow-color", "rgba(0, 0, 0, 0.3)");
+                    document.documentElement.style.setProperty("--logo-color", "#bb86fc");
+                    document.documentElement.style.setProperty("--tab-bg", "#404040");
+                    document.documentElement.style.setProperty("--tab-active", "#bb86fc");
+                    break;
+                case "blue":
+                    document.documentElement.style.setProperty("--bg-color", "#e3f2fd");
+                    document.documentElement.style.setProperty("--text-color", "#1a237e");
+                    document.documentElement.style.setProperty("--btn-color", "#1976d2");
+                    document.documentElement.style.setProperty("--btn-hover", "#1565c0");
+                    document.documentElement.style.setProperty("--container-bg", "white");
+                    document.documentElement.style.setProperty("--nav-bg", "#bbdefb");
+                    document.documentElement.style.setProperty("--border-color", "#90caf9");
+                    document.documentElement.style.setProperty("--shadow-color", "rgba(25, 118, 210, 0.2)");
+                    document.documentElement.style.setProperty("--logo-color", "#1976d2");
+                    document.documentElement.style.setProperty("--tab-bg", "#bbdefb");
+                    document.documentElement.style.setProperty("--tab-active", "#1976d2");
+                    break;
+                case "red":
+                    document.documentElement.style.setProperty("--bg-color", "#ffebee");
+                    document.documentElement.style.setProperty("--text-color", "#b71c1c");
+                    document.documentElement.style.setProperty("--btn-color", "#d32f2f");
+                    document.documentElement.style.setProperty("--btn-hover", "#c62828");
+                    document.documentElement.style.setProperty("--container-bg", "white");
+                    document.documentElement.style.setProperty("--nav-bg", "#ffcdd2");
+                    document.documentElement.style.setProperty("--border-color", "#ef9a9a");
+                    document.documentElement.style.setProperty("--shadow-color", "rgba(211, 47, 47, 0.2)");
+                    document.documentElement.style.setProperty("--logo-color", "#d32f2f");
+                    document.documentElement.style.setProperty("--tab-bg", "#ffcdd2");
+                    document.documentElement.style.setProperty("--tab-active", "#d32f2f");
+                    break;
+                default: // light theme
+                    document.documentElement.style.setProperty("--bg-color", "#f4f4f4");
+                    document.documentElement.style.setProperty("--text-color", "#333");
+                    document.documentElement.style.setProperty("--btn-color", "#28a745");
+                    document.documentElement.style.setProperty("--btn-hover", "#218838");
+                    document.documentElement.style.setProperty("--container-bg", "white");
+                    document.documentElement.style.setProperty("--nav-bg", "white");
+                    document.documentElement.style.setProperty("--border-color", "#ddd");
+                    document.documentElement.style.setProperty("--shadow-color", "rgba(0, 0, 0, 0.1)");
+                    document.documentElement.style.setProperty("--logo-color", "#4a90e2");
+                    document.documentElement.style.setProperty("--tab-bg", "#f0f0f0");
+                    document.documentElement.style.setProperty("--tab-active", "#28a745");
+                    break;
+            }
+        }
+        
+        // Initialize theme when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedTheme = localStorage.getItem("appTheme");
+            if (savedTheme) {
+                applyTheme(savedTheme);
+            }
+        });
+        
+        // Listen for theme changes in other tabs/windows
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'appTheme') {
+                applyTheme(e.newValue);
+            }
+        });
+        </script>
+</body>
+</html>
