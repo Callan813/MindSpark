@@ -1,89 +1,67 @@
-# Mindspark
+# MindSpark — Your All-in-One Digital Productivity Assistant
 
-MindSpark is a powerful web-based AI writing assistant built with the MERN stack (MongoDB, Express.js, React, Node.js). It empowers users to generate, organize, and save AI-generated content for various use cases, such as blogging, creative writing, and ideation, using OpenAI's GPT-3.5-turbo model.
+MindSpark is a personalized digital workspace designed to revolutionize how you focus, organize, and work. By integrating AI-powered productivity tools, task management, intelligent scheduling, Pomodoro focus sessions, and drowsiness detection, MindSpark helps individuals achieve peak productivity in a way that adapts to their needs and rhythms.
 
-Features
-AI-Powered Text Generation
-Leverages OpenAI API to generate coherent and creative responses to user prompts.
+# Features
+Intelligent Assistant
+Smart AI support that prioritizes tasks, suggests scheduling optimizations, and offers helpful productivity tips.
 
-Save & Manage Responses
-Users can save generated responses for future reference or inspiration.
+Pomodoro Timer
+Customizable work/break cycles based on the Pomodoro technique to maintain deep focus.
 
-Clear Chat Functionality
-Start fresh conversations anytime by clearing the chat.
+Task Management
+Organize, track, and prioritize your tasks with deadlines, dependencies, and intelligent reminders.
 
-History Log
-Keep track of your past prompts and responses.
+Smart Calendar
+Schedule tasks efficiently, integrate with existing calendars, and receive suggestions based on availability and energy levels.
 
-Tech Stack
-Frontend: React.js, Tailwind CSS
+File Viewer & Highlighter
+Upload files and highlight important sections, making referencing and note-taking easier within your workspace.
 
-Backend: Node.js, Express.js
+Focus Mode with Drowsiness Detection
+Switch to a minimal UI and use webcam-powered drowsiness detection to keep you alert during deep work sessions.
 
-Database: MongoDB
+# Problem Statement
+Digital professionals struggle with fragmented productivity tools that do not adapt to their individual styles, energy levels, or task priorities. These tools fail to address cognitive fatigue, digital distractions, and the need for sustainable work habits. There’s a growing demand for a system that can dynamically assist users in structuring their workday intelligently.
 
-AI Engine: OpenAI (GPT-3.5-turbo)
+# Our Solution
+MindSpark addresses this challenge by offering a unified, intelligent workspace that adapts in real-time to your working habits. Whether you're planning, focusing, or taking breaks, MindSpark learns and evolves with your workflow, providing:
 
-State Management: React Hooks
+Real-time assistance based on cognitive patterns and activity
 
-Auth & Routing: React Router DOM
+Visual dashboards to track productivity metrics
 
-Installation
-Prerequisites
-Node.js & npm
+Drowsiness detection for energy-aware scheduling
 
-MongoDB (local or Atlas)
+Personalized recommendations for task management and focus
 
-OpenAI API Key
+# TechStack
+Frontend:
+HTML/CSS/JavaScript(Dynamic UI)
+Font Awesome
 
-Clone the Repository
-git clone https://github.com/Callan813/MindSpark.git
-cd MindSpark
+Backend:
+Python(Flask)- AI Drowsiness Detection
 
-Backend Setup
-cd server
-npm install
+AI:
+Google Gemini API
+PyPDF2
+Logging System
 
-Create a .env file in the server/ folder and add:
-PORT=5000
-MONGODB_URI=your_mongo_connection_string
-OPENAI_API_KEY=your_openai_api_key
+# Getting Started
+Since this project is built with plain HTML, CSS, and JavaScript, there’s no build process needed.
 
-Frontend Setup
-cd client
-npm install
-npm start
+To run MindSpark locally:
 
-The frontend should now be running on http://localhost:3000 and the backend on http://localhost:5000.
+Clone or download the repository.
 
-Usage
-Enter a prompt in the text field.
+Open the index.html file in your browser.
 
-Click Generate to get AI-generated text.
+Make sure you allow access to the webcam for the drowsiness detection feature.
 
-Optionally, save the response to your history.
+All features like the floating task window, Pomodoro timer, file viewer, and theme switcher are available directly in the interface.
 
-Use Clear Chat to start over.
-
-Project Structure
-bash
-Copy
-Edit
-MindSpark/
-├── client/        # React frontend
-├── server/        # Express backend
-├── README.md
+No installation required — it just works in any modern browser!
 
 
-Acknowledgements
-OpenAI
-
-MongoDB
-
-React
-
-Express
-
-Contact
-Developed by @Callan813 and @annjogeorge
 
